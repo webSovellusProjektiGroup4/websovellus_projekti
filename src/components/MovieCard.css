@@ -1,0 +1,42 @@
+.movie-card {
+    position: relative;
+  flex: 0 0 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1e1e1e;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-overview {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  z-index: 1;
+  overflow-x: hidden;
+}
+
+.movie-card button {
+  width: 80%;
+
+}
+.movie-card h3 {
+  height: 10%;
+
+}
