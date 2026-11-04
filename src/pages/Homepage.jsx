@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './Homepage.css'
-import MovieList from '../components/Movielist.jsx'
+import MovieList from '../components/MovieList.jsx'
 function Homepage() {
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
