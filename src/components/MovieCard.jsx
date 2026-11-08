@@ -1,6 +1,7 @@
 import './MovieCard.css'
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w342'
 import { useState } from 'react'
+import StarRating from './StarRating.jsx'
 
 
 // Yksi elokuva: juliste, nimi ja arvosana.
@@ -14,7 +15,8 @@ function MovieCard({ movie }) {
       <h3>{movie.title}</h3>
       <button onClick={()=>setOverviewOpen(true)}>Tarkastele kuvausta</button>
       <p>⭐ {movie.vote_average}</p>
-
+      <StarRating movieId={movie.id} />
+      
       {overviewOpen && (
         <div className="movie-overview">
           <p>{movie.overview || 'Ei kuvausta.'}</p>
@@ -26,3 +28,4 @@ function MovieCard({ movie }) {
 }
 
 export default MovieCard
+
