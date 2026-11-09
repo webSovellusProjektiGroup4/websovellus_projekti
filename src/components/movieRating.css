@@ -1,0 +1,21 @@
+.rating-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rating-buttons button {
+  padding: 4px 8px;
+}
+
+.rating-buttons button.selected {
+  background: #f0a24a;
+  color: #1e1e1e;
+  font-weight: 700;
+}
+
+.my-rating {
+  margin: 4px 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}

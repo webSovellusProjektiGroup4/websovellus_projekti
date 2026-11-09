@@ -6,6 +6,9 @@ import cors from 'cors'
 import errorHandler from './middleware/errorHandler.js'
 import testRouter from './routes/testRouter.js'
 import movieRouter from './routes/movieRouter.js'
+import authRouter from './routes/authRouter.js'
+import requireAuth from './middleware/requireAuth.js'
+import cookieParser from 'cookie-parser'
 
 const app = express()
 
@@ -13,10 +16,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const frontendDist = path.join(__dirname, '..', 'dist')
 
 app.use(cors())
+app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/tests', testRouter)
+app.get('/api/auth/me', requireAuth, (req, res) => res.json({ user: req.user }));
+
+app.use('/api/auth', authRouter)
+
 app.use('/api/movies', movieRouter)
 
 // Health check endpoint for database connectivity

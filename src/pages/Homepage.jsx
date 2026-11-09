@@ -4,8 +4,14 @@ import axios from 'axios'
 import './Homepage.css'
 import MovieList from '../components/MovieList.jsx'
 import MovieSearch from '../components/MovieSearch.jsx'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../providers/AuthProvider.jsx'
+
+
 
 function Homepage() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,6 +24,7 @@ function Homepage() {
     try {
       const response = await axios.get('/api/movies/popular')
       setMovies(response.data.results)
+
       setSearchQuery('')
     } catch (err) {
       setError(err.message)
@@ -44,12 +51,36 @@ function Homepage() {
     }
   }
 
+  const handleOpenLoginPage = ()=>{
+    navigate('/login')
+  }
+  const handleOpenRegisterPage = ()=>{
+    navigate('/register')
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
 
   return (
     <>
+      {user ? (
+        <div className="login-button">
+          {user.username}
+          <button onClick={logout}>Kirjaudu ulos</button>
+        </div>
+      ) : (
+        <div className="login-button">
+
+        <button  onClick={handleOpenLoginPage}>
+          Kirjaudu
+        </button>
+        <button  onClick={handleOpenRegisterPage}>
+          Rekisteröidy
+        </button>
+        </div>
+      )}
+
       <h1>Elokuvahaku</h1>
 
       <MovieSearch onSearch={handleSearch} />

@@ -13,10 +13,11 @@ function MovieCard({ movie }) {
         <img className="movie-card-poster" src={`${IMAGE_BASE_URL}${movie.poster_path}`} alt={movie.title} />
       )}
       <h3>{movie.title}</h3>
-      <button onClick={()=>setOverviewOpen(true)}>Tarkastele kuvausta</button>
-      <p>⭐ {movie.vote_average}</p>
-      <MovieRating movieId={movie.id} />
-      
+      <div className="movie-card-rating">
+        <MovieRating movieId={movie.id} />
+      </div>
+      <button onClick={()=>setOverviewOpen(true)}>Kuvaus</button>
+
       {overviewOpen && (
         <div className="movie-overview">
           <p>{movie.overview || 'Ei kuvausta.'}</p>

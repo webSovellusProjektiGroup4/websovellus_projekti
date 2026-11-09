@@ -1,12 +1,15 @@
 .movie-card {
-    position: relative;
+  position: relative;
   flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
   border-radius: 8px;
   overflow: hidden;
   background: #1e1e1e;
   color: #fff;
   transition: transform 0.2s;
   cursor: pointer;
+
 }
 .movie-card:hover {
   transform: scale(1.05);
@@ -31,11 +34,18 @@
   overflow-x: hidden;
 }
 
-.movie-card button {
-  width: 80%;
+.movie-card-rating {
+  margin-top: auto;
+  margin-bottom: 8px;
+}
 
+.movie-card > button {
+  width: 80%;
+  align-self: center;
+  margin-bottom: 12px;
 }
 .movie-card h3 {
-  height: 10%;
-
+  line-height: 1.3;
+  margin: 12px 8px;
+  overflow: hidden;
 }
