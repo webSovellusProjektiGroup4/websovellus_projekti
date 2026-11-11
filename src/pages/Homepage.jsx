@@ -6,6 +6,8 @@ import MovieList from '../components/MovieList.jsx'
 import MovieSearch from '../components/MovieSearch.jsx'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../providers/AuthProvider.jsx'
+import CreateGroupButton from '../components/CreateGroupButton.jsx'
+import GroupsButton from '../components/GroupsButton.jsx'
 
 
 
@@ -75,12 +77,14 @@ function Homepage() {
         <button  onClick={handleOpenLoginPage}>
           Kirjaudu
         </button>
+
         <button  onClick={handleOpenRegisterPage}>
           Rekisteröidy
         </button>
         </div>
       )}
-
+        <GroupsButton />
+       <CreateGroupButton />
       <h1>Elokuvahaku</h1>
 
       <MovieSearch onSearch={handleSearch} />
