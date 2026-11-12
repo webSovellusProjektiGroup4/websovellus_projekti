@@ -1,4 +1,4 @@
-import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, getGroupMember,  addGroupMember, findValidGroupInvitation } from '../models/Group.js'
+import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, getGroupMember, getGroupMembers, addGroupMember, findValidGroupInvitation } from '../models/Group.js'
 import crypto from 'node:crypto'
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex')
@@ -32,7 +32,8 @@ const getGroupController = async (req, res, next) => {
         error: 'Ryhmää ei löytynyt tai sinulla ei ole oikeutta nähdä sitä'
       })
     }
-    return res.status(200).json({ group }) //ryhmä löytyi
+    const members = await getGroupMembers(groupId)
+    return res.status(200).json({group: { ...group, members }}) //ryhmä löytyi
   } 
   catch (error) {
     next(error)

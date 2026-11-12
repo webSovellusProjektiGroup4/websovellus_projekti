@@ -87,6 +87,18 @@ const getGroupForUser = async (groupId, userId) => {
   return result.rows[0]
 }
 
+const getGroupMembers = async (groupId) => {
+  const result = await pool.query(
+    `SELECT users.id, users.username, group_members.role, group_members.joined_at
+     FROM group_members
+     INNER JOIN users ON users.id = group_members.user_id
+     WHERE group_members.group_id = $1
+     ORDER BY group_members.role = 'admin' DESC, users.username`,
+    [groupId]
+  )
+  return result.rows
+}
+
 const getGroupMember = async (groupId, userId) => {
   const result = await pool.query(
     `SELECT role FROM group_members WHERE group_id = $1 AND user_id = $2`,
@@ -135,7 +147,7 @@ const addGroupMember = async (groupId, userId) => {
     
   try {
     await client.query('BEGIN')
-//TÄmä onsert tarkistaa myös ettei tee mitään jos käyttäjä on jo ryhmssä
+//TÄmä insert tarkistaa myös ettei tee mitään jos käyttäjä on jo ryhmssä
     const result = await client.query(
       `INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)
       ON CONFLICT (group_id, user_id) DO NOTHING
@@ -152,4 +164,5 @@ const addGroupMember = async (groupId, userId) => {
     client.release()
   }
 }
-export { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, findValidGroupInvitation, addGroupMember, getGroupMember}
+export { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, 
+  findValidGroupInvitation, addGroupMember, getGroupMember, getGroupMembers}

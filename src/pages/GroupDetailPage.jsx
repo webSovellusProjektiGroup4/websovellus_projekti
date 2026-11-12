@@ -23,7 +23,7 @@ function GroupDetailPage() {
       try {
         //hakee ryhmän tietoja id:n perusteella
         const response = await axios.get(`/api/groups/${id}`)
-        setGroup(response.data.group)   
+        setGroup(response.data.group)
       } 
       //jos ryhmää ei löydy
       catch (requestError) {
@@ -59,6 +59,16 @@ function GroupDetailPage() {
         <p>Näkyvyys: {groupVisibilityText(group.visibility)}</p>
         <p>Roolisi ryhmässä: {group.role}</p>
         {group.role === 'admin' && <GroupInvitation groupId={group.id} />}
+        <br></br>
+        <p>Jäsenet</p>
+        <ul>
+          {group.members.map((member)=>{
+            return (
+              <li>{member.username} ({member.role}, {new Date(member.joined_at).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' })})</li>
+            )
+          })}
+        </ul>
+      
       </>
     )
   }
