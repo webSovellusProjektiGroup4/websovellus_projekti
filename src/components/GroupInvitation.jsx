@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 // Ryhmän adminille: luo kutsulinkin ja näyttää sen kopioitavaksi
-const GroupInvitation =  ({ groupId }) => {
+const GroupInvitation =  ({ groupId, visibility }) => {
   const [inviteLink, setInviteLink] = useState('')
   const [error, setError] = useState('')
 
@@ -23,19 +23,31 @@ const GroupInvitation =  ({ groupId }) => {
   }
 
   return (
-    <section>
-      <button type="button" onClick={createInvitation}>Luo kutsulinkki</button>
+    visibility==="public" ? (
 
+      
+      <section>
+      <button type="button" onClick={createInvitation}>Luo kutsulinkki</button>
+      
       {inviteLink && (
         <div>
-          <input value={inviteLink} readOnly />
-          <button type="button" onClick={() => navigator.clipboard.writeText(inviteLink)}>Kopioi linkki</button>
-          <p>Linkki on voimassa 7 päivää.</p>
+        <input value={inviteLink} readOnly />
+        <button type="button" onClick={() => navigator.clipboard.writeText(inviteLink)}>Kopioi linkki</button>
+        <p>Linkki on voimassa 7 päivää.</p>
         </div>
       )}
-
+      
       {error && <p role="alert">{error}</p>}
-    </section>
+      </section>
+    ) :  (
+      <section>
+        <p>Yksityinen ryhmä. Ei voi kutsua linkillä</p>
+      <button type="button" >Kutsu jäseniä</button>
+      
+     
+      </section>
+    )
+    
   )
 }
 

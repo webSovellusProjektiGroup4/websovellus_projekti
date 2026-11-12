@@ -98,11 +98,16 @@ const createGroupInvitationController = async (req, res, next) => {
 
     const userId = req.user.id
 
-    // Vain ryhmän admin saa luoda kutsulinkin
-    const member = await getGroupMember(groupId, userId)
-    if (member?.role !== 'admin') {
-        return res.status(403).json({ error: 'Vain ryhmän ylläpitäjä voi luoda kutsulinkin' })
-      }
+    // Hakee ryhmän, jos käyttäjä on sen jäsen: sisältää visibility- ja role-kentät
+    const group = await getGroupForUser(groupId, userId)
+
+    if (group?.role !== 'admin') {
+      return res.status(403).json({ error: 'Vain ryhmän ylläpitäjä voi luoda kutsulinkin' })
+    }
+
+    if (group.visibility === 'private') {
+      return res.status(403).json({ error: 'Yksityiseen ryhmään ei voi luoda kutsulinkkiä' })
+    }
 
     //7 päivän expire
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)

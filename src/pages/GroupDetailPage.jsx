@@ -58,7 +58,7 @@ function GroupDetailPage() {
         <h1>{group.name}</h1>
         <p>Näkyvyys: {groupVisibilityText(group.visibility)}</p>
         <p>Roolisi ryhmässä: {group.role}</p>
-        {group.role === 'admin' && <GroupInvitation groupId={group.id} />}
+        {group.role === 'admin' && <GroupInvitation groupId={group.id} visibility={group.visibility} />}
         <br></br>
         <p>Jäsenet</p>
         <ul>
