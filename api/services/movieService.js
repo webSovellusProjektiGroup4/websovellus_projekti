@@ -12,7 +12,6 @@ const fetchPopularMovies = async () => {
 
     }
         const movies = await response.json();
-        console.log(movies)
         return movies
 
 }

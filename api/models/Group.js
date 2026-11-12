@@ -1,5 +1,7 @@
 import { pool } from './db.js'
 
+
+
 const createGroup = async (name, visibility, creatorId) => {
   const client = await pool.connect()
 
@@ -85,4 +87,69 @@ const getGroupForUser = async (groupId, userId) => {
   return result.rows[0]
 }
 
-export { createGroup, getGroupsForUser, getGroupForUser }
+const getGroupMember = async (groupId, userId) => {
+  const result = await pool.query(
+    `SELECT role FROM group_members WHERE group_id = $1 AND user_id = $2`,
+    [groupId, userId]
+  )
+  return result.rows[0] ?? null
+}
+
+const createGroupInvitation = async (groupId, invitedBy, tokenHash, expiresAt) => {
+    const client = await pool.connect()
+    
+  try {
+    // Aloitetaan transaktio
+    await client.query('BEGIN')
+
+  const result = await client.query(
+    `INSERT INTO group_invitations (group_id, invited_by, token_hash, expires_at)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id, group_id, expires_at`,
+    [groupId, invitedBy, tokenHash, expiresAt]
+  )
+  await client.query('COMMIT')
+
+  return result.rows[0]
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
+const findValidGroupInvitation = async (tokenHash) => {
+  const result = await pool.query(
+    `SELECT id, group_id FROM group_invitations
+     WHERE token_hash = $1
+       AND revoked_at IS NULL
+       AND (expires_at IS NULL OR expires_at > now())`,
+    [tokenHash]
+  )
+  return result.rows[0] ?? null
+}
+
+const addGroupMember = async (groupId, userId) => {
+  const client = await pool.connect()
+    
+  try {
+    await client.query('BEGIN')
+//TÄmä onsert tarkistaa myös ettei tee mitään jos käyttäjä on jo ryhmssä
+    const result = await client.query(
+      `INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)
+      ON CONFLICT (group_id, user_id) DO NOTHING
+      RETURNING id`,
+      [groupId, userId]
+    )
+        await client.query('COMMIT')
+
+    return result.rows[0] ?? null
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+export { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, findValidGroupInvitation, addGroupMember, getGroupMember}

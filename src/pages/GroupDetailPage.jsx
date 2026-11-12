@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import groupVisibilityText from '../utils/groupVisibilityText.js'
+import GroupInvitation from '../components/GroupInvitation.jsx'
 
 function GroupDetailPage() {
 
@@ -57,6 +58,7 @@ function GroupDetailPage() {
         <h1>{group.name}</h1>
         <p>Näkyvyys: {groupVisibilityText(group.visibility)}</p>
         <p>Roolisi ryhmässä: {group.role}</p>
+        {group.role === 'admin' && <GroupInvitation groupId={group.id} />}
       </>
     )
   }

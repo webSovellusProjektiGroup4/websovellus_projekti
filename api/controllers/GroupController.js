@@ -1,5 +1,7 @@
-import { createGroup, getGroupsForUser, getGroupForUser } from '../models/Group.js'
+import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, getGroupMember,  addGroupMember, findValidGroupInvitation } from '../models/Group.js'
+import crypto from 'node:crypto'
 
+const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex')
 
 const getGroupsController = async (req, res, next) => {
   try {
@@ -78,6 +80,67 @@ const createGroupController = async (req, res, next) => {
     catch (error) { // jos tullee virhe, nii info mennee middlewaren virheenkäsittelijälle
     next(error)
   }
+
+
 }
 
-export { createGroupController, getGroupsController, getGroupController }
+
+const createGroupInvitationController = async (req, res, next) => {
+  try {
+    const groupId = Number(req.body.groupId)
+
+    if (!Number.isInteger(groupId) || groupId < 1) {
+      return res.status(400).json({
+        error: 'Ryhmän id ei ole kelvollinen'
+      })
+    }
+
+    const userId = req.user.id
+
+    // Vain ryhmän admin saa luoda kutsulinkin
+    const member = await getGroupMember(groupId, userId)
+    if (member?.role !== 'admin') {
+        return res.status(403).json({ error: 'Vain ryhmän ylläpitäjä voi luoda kutsulinkin' })
+      }
+
+    //7 päivän expire
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    const token = crypto.randomBytes(32).toString('base64url')
+
+
+    const memberInvitation = await createGroupInvitation(groupId, userId, hashToken(token), expiresAt)
+    return res.status(201).json({ memberInvitation, token })
+  } 
+  catch (error) {
+    next(error)
+  }
+}
+
+  const createMemberWithGroupInvitationLinkController = async (req, res, next) => {
+      try {
+    const userId = req.user.id
+    const token = req.body.token
+    if (typeof token !== 'string' || token.length === 0){
+      return res.status(400).json({
+        error: 'Linkin token ei ole oikeanmuotoinen'
+      })
+    }
+    const tokenHash = hashToken(token)
+    const invitation = await findValidGroupInvitation(tokenHash)
+// console.log(invitation)
+    if (invitation === null){
+      return res.status(400).json({
+        error: 'Kutsulinkki ei voimassa'
+      })
+    }
+    const createdGroupMember = await addGroupMember(invitation.group_id, userId)
+    // console.log(createdGroupMember)
+    return res.status(201).json({ createdGroupMember,  groupId: invitation.group_id })
+      } catch (error) {
+      next(error)
+    }
+  }
+
+
+
+export { createGroupController, getGroupsController, getGroupController, createGroupInvitationController ,createMemberWithGroupInvitationLinkController}
