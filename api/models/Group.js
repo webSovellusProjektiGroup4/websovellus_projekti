@@ -87,6 +87,30 @@ const getGroupForUser = async (groupId, userId) => {
   return result.rows[0]
 }
 
+const searchPublicGroups = async (search, userId) => {
+  const result = await pool.query(
+    `SELECT g.id,
+            g.name,
+            (SELECT COUNT(*)::int
+             FROM group_members gm
+             WHERE gm.group_id = g.id) AS member_count,
+            EXISTS (SELECT 1
+                    FROM group_members gm
+                    WHERE gm.group_id = g.id AND gm.user_id = $2) AS is_member
+     FROM groups g
+     WHERE g.visibility = 'public'
+       AND g.name ILIKE '%' || $1 || '%'
+     ORDER BY member_count DESC, g.name
+     LIMIT 50`,
+    [search, userId ?? null]
+  )
+  return result.rows
+}
+
+
+
+
+
 const getGroupMembers = async (groupId) => {
   const result = await pool.query(
     `SELECT users.id, users.username, group_members.role, group_members.joined_at
@@ -164,5 +188,17 @@ const addGroupMember = async (groupId, userId) => {
     client.release()
   }
 }
+
+const getGroupVisibility = async (groupId) => {
+  const result = await pool.query(
+    'SELECT visibility FROM groups WHERE id = $1',
+    [groupId]
+  )
+  return result.rows[0]?.visibility ?? null   
+}
+
+
+
 export { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, 
-  findValidGroupInvitation, addGroupMember, getGroupMember, getGroupMembers}
+  findValidGroupInvitation, addGroupMember, getGroupMember, getGroupMembers, 
+  searchPublicGroups, getGroupVisibility}

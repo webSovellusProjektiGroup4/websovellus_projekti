@@ -1,4 +1,6 @@
-import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, getGroupMember, getGroupMembers, addGroupMember, findValidGroupInvitation } from '../models/Group.js'
+import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation,
+   getGroupMember, searchPublicGroups, getGroupMembers, addGroupMember, 
+   findValidGroupInvitation, getGroupVisibility } from '../models/Group.js'
 import crypto from 'node:crypto'
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex')
@@ -148,5 +150,43 @@ const createGroupInvitationController = async (req, res, next) => {
   }
 
 
+  const searchPublicGroupsController = async (req, res, next) => {
+      try {
+      const search = typeof req.query.search === 'string' ? req.query.search.trim() : ''
+      console.log(search)
+      const groups = await searchPublicGroups(search, req.user?.id)
 
-export { createGroupController, getGroupsController, getGroupController, createGroupInvitationController ,createMemberWithGroupInvitationLinkController}
+    return res.status(201).json({ groups })
+      } catch (error) {
+      next(error)
+    }
+  }
+
+  
+const joinPublicGroupController = async (req, res, next) => {
+  try {
+    const groupId = Number(req.params.id)
+    if (!Number.isInteger(groupId) || groupId < 1) {
+      return res.status(400).json({ error: 'Ryhmän id ei ole kelvollinen' })
+    }
+
+
+    // Vain julkiseen ryhmään voi liittyä ilman kutsua
+    const visibility = await getGroupVisibility(groupId)
+    if (visibility !== 'public') {
+      return res.status(404).json({ error: 'Ryhmää ei löytynyt' })
+    }
+    await addGroupMember(groupId, req.user.id)
+    return res.status(200).json({ groupId })
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+
+export { createGroupController, getGroupsController, 
+  getGroupController, createGroupInvitationController ,
+  createMemberWithGroupInvitationLinkController, searchPublicGroupsController,
+  joinPublicGroupController
+}
