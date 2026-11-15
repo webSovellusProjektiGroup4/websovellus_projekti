@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import groupVisibilityText from '../utils/groupVisibilityText.js'
 import GroupInvitation from '../components/GroupInvitation.jsx'
+import GroupChat from '../components/GroupChat.jsx'
 
 function GroupDetailPage() {
 
@@ -68,7 +69,9 @@ function GroupDetailPage() {
             )
           })}
         </ul>
-      
+
+        <h2>Keskustelu</h2>
+        <GroupChat groupId={group.id} />
       </>
     )
   }
