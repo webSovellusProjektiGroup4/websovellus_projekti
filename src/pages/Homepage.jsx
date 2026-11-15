@@ -83,11 +83,25 @@ function Homepage() {
         </button>
         </div>
       )}
+
+      <div className="homepage-navigation">
         <GroupsButton />
-       <CreateGroupButton />
+        <CreateGroupButton />
+
+        {user && (
+          <button
+            type="button"
+            onClick={() => navigate('/lists')}
+          >
+            Omat elokuvalistat
+          </button>
+        )}
+      </div>
+
       <h1>Elokuvahaku</h1>
 
       <MovieSearch onSearch={handleSearch} />
+
 
       <h2>
         {searchQuery

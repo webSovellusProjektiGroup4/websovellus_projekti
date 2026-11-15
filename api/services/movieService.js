@@ -37,4 +37,32 @@ const searchMovies = async (query) => {
   return movies
 }
 
-export { fetchPopularMovies, searchMovies }
+const fetchMovieDetails = async (tmdbId) => {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/${tmdbId}?language=fi-FI`,
+    {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`
+      }
+    }
+  )
+
+  if (!response.ok) {
+    const error = new Error(
+      `Elokuvan tietojen hakeminen epäonnistui (${response.status})`
+    )
+    error.status = 502
+    throw error
+  }
+
+  const movie = await response.json()
+
+  return {
+    tmdb_id: movie.id,
+    title: movie.title,
+    poster_path: movie.poster_path
+  }
+}
+
+
+export { fetchPopularMovies, searchMovies, fetchMovieDetails }

@@ -8,6 +8,7 @@ import testRouter from './routes/testRouter.js'
 import movieRouter from './routes/movieRouter.js'
 import authRouter from './routes/authRouter.js'
 import groupRouter from './routes/groupRouter.js'
+import movieListRouter from './routes/movieListRouter.js'
 import requireAuth from './middleware/requireAuth.js'
 import cookieParser from 'cookie-parser'
 
@@ -28,7 +29,7 @@ app.use('/api/auth', authRouter)
 
 app.use('/api/movies', movieRouter)
 app.use('/api/groups', groupRouter)
-
+app.use('/api/lists', movieListRouter)
 
 // Health check endpoint for database connectivity
 app.get('/api/health', async (req, res) => {
