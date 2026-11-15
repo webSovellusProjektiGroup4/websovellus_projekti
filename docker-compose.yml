@@ -63,7 +63,7 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_TOKEN=${JWT_TOKEN}
       - NODE_ENV=development
       - DB_HOST=database
       - CHOKIDAR_USEPOLLING=true

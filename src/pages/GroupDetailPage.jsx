@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import groupVisibilityText from '../utils/groupVisibilityText.js'
-
+import GroupChat from '../components/GroupChat.jsx'
 function GroupDetailPage() {
 
     // löytää reitistö ryhmän id:n perusteella
@@ -57,6 +57,7 @@ function GroupDetailPage() {
         <h1>{group.name}</h1>
         <p>Näkyvyys: {groupVisibilityText(group.visibility)}</p>
         <p>Roolisi ryhmässä: {group.role}</p>
+        <GroupChat groupId={id} />
       </>
     )
   }

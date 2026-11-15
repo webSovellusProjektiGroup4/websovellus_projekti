@@ -10,6 +10,7 @@ import authRouter from './routes/authRouter.js'
 import groupRouter from './routes/groupRouter.js'
 import requireAuth from './middleware/requireAuth.js'
 import cookieParser from 'cookie-parser'
+import groupMessageRoutes from './routes/groupMessagesRoutes.js'
 
 const app = express()
 
@@ -28,6 +29,7 @@ app.use('/api/auth', authRouter)
 
 app.use('/api/movies', movieRouter)
 app.use('/api/groups', groupRouter)
+app.use('/api/groups', groupMessageRoutes)
 
 
 // Health check endpoint for database connectivity
