@@ -25,7 +25,7 @@ function MovieRating({ movieId }) {
     await axios.post(`/api/movies/${movieId}/reviews`, { rating: n })
     load()
   }
-        console.log(rate)
+        // console.log(rate)
 
   return (
     <div>

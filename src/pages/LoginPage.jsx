@@ -2,14 +2,16 @@
 import { useState } from 'react'
 import './LoginAndRegisterPage.css'
 import { useAuth } from '../providers/AuthProvider.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 
 
 function LoginPage() {
   const navigate = useNavigate();
-    const { login } = useAuth();
+  const { login } = useAuth();
+  const location = useLocation()
+  const from = location.state?.from ?? '/' 
 
   const [error, setError] = useState('');
   async function submit(e) {
@@ -17,7 +19,7 @@ function LoginPage() {
     setError('');
     try {
       await login(e.target.username.value, e.target.password.value);
-      navigate('/', { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.error || 'Kirjautuminen epäonnistui')
     }
@@ -44,7 +46,7 @@ function LoginPage() {
           Kirjaudu
     </button>
     <br/>
-    <Link to="/register">Eikö sinulla ole tiliä? Rekisteröidy</Link>
+    <Link to="/register" state={{ from }}>Eikö sinulla ole tiliä? Rekisteröidy</Link>
     </form>
      {error && <p role="alert">{error}</p>}
     </div>

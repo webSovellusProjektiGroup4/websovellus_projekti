@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import './LoginAndRegisterPage.css'
 import { useAuth } from '../providers/AuthProvider.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
 
@@ -10,7 +10,8 @@ import { Link } from 'react-router-dom'
 function RegisterPage() {
   const navigate = useNavigate();
     const { register, login } = useAuth();
-
+    const location = useLocation()
+    const from = location.state?.from ?? '/'
   const [error, setError] = useState('');
   async function submit(e) {
             e.preventDefault();
@@ -22,7 +23,7 @@ function RegisterPage() {
             await register(e.target.username.value, e.target.password.value);
             await login(e.target.username.value, e.target.password.value)
 
-            navigate('/', { replace: true });
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.response?.data?.error || 'Rekisteröityminen epäonnistui')
         }

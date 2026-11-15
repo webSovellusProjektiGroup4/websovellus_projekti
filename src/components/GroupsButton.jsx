@@ -5,9 +5,7 @@ function GroupsButton() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  if (!user) {
-    return null
-  }
+
 
   function openGroupsPage() {
     navigate('/groups')
@@ -15,7 +13,7 @@ function GroupsButton() {
 
   return (
     <button type="button" onClick={openGroupsPage}>
-      Omat ryhmät
+      Ryhmät
     </button>
   )
 }
