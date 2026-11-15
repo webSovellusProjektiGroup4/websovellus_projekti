@@ -197,8 +197,88 @@ const getGroupVisibility = async (groupId) => {
   return result.rows[0]?.visibility ?? null   
 }
 
+//PRIVATE GROUP funktiot
+const createJoinRequest = async (groupId, userId, invitationId) => {
+   const client = await pool.connect()
+    
+  try {
+    // Aloitetaan transaktio
+    await client.query('BEGIN')
+
+    const result = await client.query(
+      `INSERT INTO group_join_requests (group_id, user_id, invitation_id)
+      VALUES ($1, $2, $3)
+      ON CONFLICT DO NOTHING
+      RETURNING id`,
+      [groupId, userId, invitationId]
+    )
+    await client.query('COMMIT')
+
+    return result.rows[0] ?? null
+
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
+const getPendingJoinRequests = async (groupId) => {
+  const result = await pool.query(
+    `SELECT r.id, r.created_at, u.id AS user_id, u.username
+     FROM group_join_requests r
+     JOIN users u ON u.id = r.user_id
+     WHERE r.group_id = $1 AND r.status = 'pending'
+     ORDER BY r.created_at`,
+    [groupId]
+  )
+  return result.rows
+}
+
+const decideJoinRequest = async (requestId, groupId, status, adminId) => {
+  const client = await pool.connect()
+
+  try {
+    await client.query('BEGIN')
+
+    const result = await client.query(
+      `UPDATE group_join_requests
+       SET status = $3, decided_at = now(), decided_by = $4
+       WHERE id = $1 AND group_id = $2 AND status = 'pending'
+       RETURNING user_id`,
+      [requestId, groupId, status, adminId]
+    )
+
+    const request = result.rows[0]
+    if (!request) {
+      await client.query('ROLLBACK')
+      return null    // ei löytynyt  tai toisen ryhmän tai on jo käsitelty
+    }
+
+    // Hyväksytty → lisätään jäseneksi samassa transaktiossa
+    if (status === 'approved') {
+      await client.query(
+        `INSERT INTO group_members (group_id, user_id) VALUES ($1, $2)
+         ON CONFLICT (group_id, user_id) DO NOTHING`,
+        [groupId, request.user_id]
+      )
+    }
+
+    await client.query('COMMIT')
+    return request
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
+
 
 
 export { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation, 
   findValidGroupInvitation, addGroupMember, getGroupMember, getGroupMembers, 
-  searchPublicGroups, getGroupVisibility}
+  searchPublicGroups, getGroupVisibility, createJoinRequest, getPendingJoinRequests,
+  decideJoinRequest}

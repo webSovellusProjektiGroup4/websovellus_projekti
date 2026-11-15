@@ -23,7 +23,6 @@ const GroupInvitation =  ({ groupId, visibility }) => {
   }
 
   return (
-    visibility==="public" ? (
 
       
       <section>
@@ -39,14 +38,7 @@ const GroupInvitation =  ({ groupId, visibility }) => {
       
       {error && <p role="alert">{error}</p>}
       </section>
-    ) :  (
-      <section>
-        <p>Yksityinen ryhmä. Ei voi kutsua linkillä</p>
-      <button type="button" >Kutsu jäseniä</button>
-      
-     
-      </section>
-    )
+    
     
   )
 }

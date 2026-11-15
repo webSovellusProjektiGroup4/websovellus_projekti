@@ -1,6 +1,7 @@
 import { createGroup, getGroupsForUser, getGroupForUser, createGroupInvitation,
    getGroupMember, searchPublicGroups, getGroupMembers, addGroupMember, 
-   findValidGroupInvitation, getGroupVisibility } from '../models/Group.js'
+   findValidGroupInvitation, getGroupVisibility, createJoinRequest, getPendingJoinRequests,
+  decideJoinRequest } from '../models/Group.js'
 import crypto from 'node:crypto'
 
 const hashToken = (token) => crypto.createHash('sha256').update(token).digest('hex')
@@ -107,9 +108,9 @@ const createGroupInvitationController = async (req, res, next) => {
       return res.status(403).json({ error: 'Vain ryhmän ylläpitäjä voi luoda kutsulinkin' })
     }
 
-    if (group.visibility === 'private') {
-      return res.status(403).json({ error: 'Yksityiseen ryhmään ei voi luoda kutsulinkkiä' })
-    }
+    // if (group.visibility === 'private') {
+    //   return res.status(403).json({ error: 'Yksityiseen ryhmään ei voi luoda kutsulinkkiä' })
+    // }
 
     //7 päivän expire
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
@@ -135,15 +136,28 @@ const createGroupInvitationController = async (req, res, next) => {
     }
     const tokenHash = hashToken(token)
     const invitation = await findValidGroupInvitation(tokenHash)
-// console.log(invitation)
+
     if (invitation === null){
-      return res.status(400).json({
+      return res.status(404).json({
         error: 'Kutsulinkki ei voimassa'
       })
     }
-    const createdGroupMember = await addGroupMember(invitation.group_id, userId)
-    // console.log(createdGroupMember)
-    return res.status(201).json({ createdGroupMember,  groupId: invitation.group_id })
+    const groupId = invitation.group_id
+    const member = await getGroupMember(groupId, userId)
+    if (member !== null) {
+      //Member on jo ryhmässä
+      return res.status(200).json({ status: 'member', groupId })
+    }
+    const visibility = await getGroupVisibility(groupId)
+    
+    //Jos group on julkinen
+    if (visibility === 'public') {
+      await addGroupMember(groupId, userId)
+      return res.status(200).json({ status: 'member', groupId })
+    }    
+    // Yksityiselle
+     await createJoinRequest(groupId, userId, invitation.id)
+    return res.status(202).json({ status: 'pending' })
       } catch (error) {
       next(error)
     }
@@ -183,10 +197,63 @@ const joinPublicGroupController = async (req, res, next) => {
   }
 }
 
+//PRIVATE GROUP
+const getAdminGroupId = async (req, res) => {
+  const groupId = Number(req.params.id)
+  
+  if (!Number.isInteger(groupId) || groupId < 0) {
+    res.status(400).json({ error: 'Ryhmän id ei ole kelvollinen' })
+    return null
+  }
+  const member = await getGroupMember(groupId, req.user.id)
+  if (member?.role !== 'admin') {
+    res.status(403).json({ error: 'Vain ryhmän ylläpitäjä voi käsitellä liittymispyyntöjä' })
+    return null
+  }
+  return groupId
+
+}
+
+const getJoinRequestsController = async (req, res, next) =>{
+  try {
+    const groupId = await getAdminGroupId(req, res)
+    if(groupId === null) return
+    const requests = await getPendingJoinRequests(groupId)
+    return res.status(200).json({requests})
+  } catch (error) {
+    next(error)
+  }
+}
+
+const decideJoinRequestController = (status) => async(req, res, next) => {
+  try {
+    const groupId = await getAdminGroupId(req, res)
+    if(groupId === null ) return
+
+    const requestId = Number(req.params.requestId)
+    if (!Number.isInteger(requestId) || requestId < 1) {
+      return res.status(400).json({ error: 'Pyynnön id ei ole kelvollinen' })
+    }
+
+    const request = await decideJoinRequest(requestId, groupId, status, req.user.id)
+    if(request === null){
+      return res.status(404).json({error: 'Liittymispyyntöä ei löytynyt tai se on jo käsitelty'})
+    }
+
+    return res.status(200).json({status})
+  } catch (error) {
+    next(error)
+  }
+}
+
+const approveJoinRequestController = decideJoinRequestController("approved")
+const rejectJoinRequestController = decideJoinRequestController("rejected")
+
 
 
 export { createGroupController, getGroupsController, 
   getGroupController, createGroupInvitationController ,
   createMemberWithGroupInvitationLinkController, searchPublicGroupsController,
-  joinPublicGroupController
+  joinPublicGroupController, approveJoinRequestController, rejectJoinRequestController,
+  getJoinRequestsController
 }

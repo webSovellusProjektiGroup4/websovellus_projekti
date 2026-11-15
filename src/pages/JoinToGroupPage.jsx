@@ -10,6 +10,8 @@ function JoinToGroupPage() {
   const location = useLocation()
 
   const [error, setError] = useState('')
+  const [pendingRequest, setPendingRequest] = useState(false)
+
 
   useEffect(() => {
 
@@ -22,7 +24,11 @@ function JoinToGroupPage() {
     async function joinGroup() {
       try {
         const response = await axios.post('/api/groups/createMemberWithInvitation', { token })
-        navigate(`/groups/${response.data.groupId}`)
+        if(response.data.member){
+          navigate(`/groups/${response.data.groupId}`)
+        } else {
+          setPendingRequest(true)
+        }
       } catch (requestError) {
         setError(requestError)
       }
@@ -33,7 +39,13 @@ function JoinToGroupPage() {
 
   return (
     <main>
-      {error ? <p role="alert">{error}</p> : <p>Liitytään ryhmään...</p>}
+      {pendingRequest ? <>
+      <p>Liittymispyyntö on lähetetty</p>
+       <button type="button" onClick={() => navigate('/')}>
+        Palaa etusivulle
+      </button>
+      </> : 
+      error ? <p role="alert">{error}</p> : <p>Liitytään ryhmään...</p>}
     </main>
   )
 }

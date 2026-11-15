@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import MessageBox from './MessageBox'
+import { useAuth } from '../providers/AuthProvider'
+import './MessageBox.css'
+
 
 function GroupChat({ groupId }) {
+  const { user } = useAuth()
+
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
   const [error, setError] = useState('')
@@ -53,15 +59,12 @@ function GroupChat({ groupId }) {
       {messages.length === 0 ? (
         <p>Ei vielä viestejä.</p>
       ) : (
-        <ul>
-          {messages.map((message) => (
-            <li key={message.id}>
-              <strong>{message.username}</strong>{' '}
-              ({new Date(message.created_at).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' })}):{' '}
-              {message.content}
-            </li>
-          ))}
-        </ul>
+       <ul className="message-list">
+        {messages.map((message) => (
+          <MessageBox key={message.id} message={message} user={user} />
+        ))}
+      </ul>
+      
       )}
 
       <form onSubmit={sendMessage}>

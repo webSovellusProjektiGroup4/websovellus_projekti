@@ -1,0 +1,46 @@
+/* Sivu: kaksi saraketta (keskustelu leveämpi, jäsenet kapeampi) */
+.group-page {
+  display: grid;
+  grid-template-columns: 75% 45%;
+  gap: 16px 2%; 
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+/* Ylätunniste ja Palaa-nappi koko leveydelle */
+.group-detail,
+.group-page > button {
+  grid-column: 1 / -1;
+}
+
+/* Keskustelu ja jäsenet laatikoiksi */
+.group-chat,
+.members-list {
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(127, 127, 127, 0.1);
+}
+
+/* Pitkä keskustelu vierittyy laatikon sisällä */
+.group-chat ul {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+/* Hallintadialogi */
+.group-page dialog {
+  max-width: 500px;
+  border-radius: 12px;
+}
+
+.group-page dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Puhelin: yksi sarake */
+@media (max-width: 700px) {
+  .group-page {
+    grid-template-columns: 100%;
+  }
+}
