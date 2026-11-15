@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import CreateGroupPage from './pages/CreateGroupPage.jsx'
 import GroupsPage from './pages/GroupsPage.jsx'
 import GroupDetailPage from './pages/GroupDetailPage.jsx'
+import JoinToGroupPage from './pages/JoinToGroupPage.jsx'
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
       <Route path="/groups/new" element={<CreateGroupPage />} />
       <Route path="/groups" element={<GroupsPage />} />
       <Route path="/groups/:id" element={<GroupDetailPage />} />
+      <Route path="/join/:token" element={<JoinToGroupPage />} />
     </Routes>
     </>
   )

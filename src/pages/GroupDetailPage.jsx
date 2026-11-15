@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import groupVisibilityText from '../utils/groupVisibilityText.js'
+import GroupInvitation from '../components/GroupInvitation.jsx'
 import GroupChat from '../components/GroupChat.jsx'
+
 function GroupDetailPage() {
 
     // löytää reitistö ryhmän id:n perusteella
@@ -22,7 +24,7 @@ function GroupDetailPage() {
       try {
         //hakee ryhmän tietoja id:n perusteella
         const response = await axios.get(`/api/groups/${id}`)
-        setGroup(response.data.group)   
+        setGroup(response.data.group)
       } 
       //jos ryhmää ei löydy
       catch (requestError) {
@@ -57,7 +59,19 @@ function GroupDetailPage() {
         <h1>{group.name}</h1>
         <p>Näkyvyys: {groupVisibilityText(group.visibility)}</p>
         <p>Roolisi ryhmässä: {group.role}</p>
-        <GroupChat groupId={id} />
+        {group.role === 'admin' && <GroupInvitation groupId={group.id} visibility={group.visibility} />}
+        <br></br>
+        <p>Jäsenet</p>
+        <ul>
+          {group.members.map((member)=>{
+            return (
+              <li>{member.username} ({member.role}, {new Date(member.joined_at).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' })})</li>
+            )
+          })}
+        </ul>
+
+        <h2>Keskustelu</h2>
+        <GroupChat groupId={group.id} />
       </>
     )
   }
