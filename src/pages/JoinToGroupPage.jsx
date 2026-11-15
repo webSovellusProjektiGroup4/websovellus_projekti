@@ -24,7 +24,7 @@ function JoinToGroupPage() {
     async function joinGroup() {
       try {
         const response = await axios.post('/api/groups/createMemberWithInvitation', { token })
-        if(response.data.member){
+        if(response.data.status = 'member'){
           navigate(`/groups/${response.data.groupId}`)
         } else {
           setPendingRequest(true)
