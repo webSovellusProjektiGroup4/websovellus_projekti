@@ -24,13 +24,14 @@ function JoinToGroupPage() {
     async function joinGroup() {
       try {
         const response = await axios.post('/api/groups/createMemberWithInvitation', { token })
-        if(response.data.status = 'member'){
+        if(response.data.status === 'member'){
           navigate(`/groups/${response.data.groupId}`)
         } else {
           setPendingRequest(true)
         }
       } catch (requestError) {
-        setError(requestError)
+        const backendError = requestError.response?.data?.error
+        setError(backendError?.message ?? backendError ?? 'Kutsulinkki ei ole voimassa.')
       }
     }
 
