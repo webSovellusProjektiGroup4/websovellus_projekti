@@ -13,6 +13,7 @@ import JoinToGroupPage from './pages/JoinToGroupPage.jsx'
 import MovieListsPage from './pages/MovieListsPage.jsx'
 import SharedMovieListPage from './pages/SharedMovieListPage.jsx'
 
+
 function App() {
   return (
     <Routes>

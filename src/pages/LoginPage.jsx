@@ -2,54 +2,51 @@
 import { useState } from 'react'
 import './LoginAndRegisterPage.css'
 import { useAuth } from '../providers/AuthProvider.jsx'
-import { useNavigate,useLocation } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { useNavigate,useLocation, Link as RouterLink } from 'react-router-dom'
+import { Button, Container, Link, Paper, Stack, TextField, Typography } from '@mui/material'
 
 
 
 function LoginPage() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
+  const navigate = useNavigate()
+  const { login } = useAuth()
   const location = useLocation()
   const from = location.state?.from ?? '/' 
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState('')
   async function submit(e) {
-    e.preventDefault();
-    setError('');
+    e.preventDefault()
+    setError('')
     try {
-      await login(e.target.username.value, e.target.password.value);
-      navigate(from, { replace: true });
+      await login(e.target.username.value, e.target.password.value)
+      navigate(from, { replace: true })
     } catch (err) {
       setError(err.response?.data?.error || 'Kirjautuminen epäonnistui')
     }
   }
 
   return (
-    <div className='login-page'>
-    <h1>Kirjaudu</h1>
-    <form onSubmit={submit}>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Paper sx={{ p: 4 }}>
 
-    <label>Käyttäjänimi
-
-    <input name="username"  required ></input>
-    </label>
-    <label>Salasana
-
-    <input type="password" name="password" required></input>
-    </label>
-
-    <button type="button" onClick={()=>navigate('/', { replace: true })}>
-          Takaisin etusivulle
-    </button>
-        <button>
+        <Typography variant="h4" component="h1" gutterBottom>
           Kirjaudu
-    </button>
-    <br/>
-    <Link to="/register" state={{ from }}>Eikö sinulla ole tiliä? Rekisteröidy</Link>
-    </form>
-     {error && <p role="alert">{error}</p>}
-    </div>
+        </Typography>
+        <Stack component="form" onSubmit={submit} spacing={2}>
+
+          <TextField name="username" label="Käyttäjänimi" required autoComplete="username" />
+          <TextField name="password" label="Salasana" type="password" required autoComplete="password" />
+          <Button type="submit" variant = "contained" >
+            Kirjaudu
+          </Button>
+          <Button type="button" onClick={() => navigate('/', { replace: true })}>
+            Takaisin etusivulle
+          </Button>
+
+          <Link component={RouterLink} to="/register" state={{ from }}  textAlign="center">Eikö sinulla ole tiliä? Rekisteröidy</Link>
+        </Stack>
+      </Paper>
+    </Container>
   )
 }
 

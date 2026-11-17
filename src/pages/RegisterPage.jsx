@@ -1,69 +1,62 @@
-
 import { useState } from 'react'
-import './LoginAndRegisterPage.css'
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom'
+import { Alert, Button, Container, Link, Paper, Stack, TextField, Typography } from '@mui/material'
 import { useAuth } from '../providers/AuthProvider.jsx'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-
-
 
 function RegisterPage() {
-  const navigate = useNavigate();
-    const { register, login } = useAuth();
-    const location = useLocation()
-    const from = location.state?.from ?? '/'
-  const [error, setError] = useState('');
+  const navigate = useNavigate()
+  const { register, login } = useAuth()
+  const location = useLocation()
+  const from = location.state?.from ?? '/'
+  const [error, setError] = useState('')
+
   async function submit(e) {
-            e.preventDefault();
-    if(e.target.password.value===e.target.secondpassword.value){
+    e.preventDefault()
 
+    if (e.target.password.value !== e.target.secondpassword.value) {
+      setError('Annetut salasanat eivät täsmää')
+      return
+    }
 
-        setError('');
-        try {
-            await register(e.target.username.value, e.target.password.value);
-            await login(e.target.username.value, e.target.password.value)
-
-            navigate(from, { replace: true });
-        } catch (err) {
-            setError(err.response?.data?.error || 'Rekisteröityminen epäonnistui')
-        }
-    } else {
-        setError("Annetut salasanat eivät täsmää")
-
+    setError('')
+    try {
+      await register(e.target.username.value, e.target.password.value)
+      await login(e.target.username.value, e.target.password.value)
+      navigate(from, { replace: true })
+    } catch (err) {
+      // backend palauttaa virheen joko tekstinä tai objektina { message }
+      const backendError = err.response?.data?.error
+      setError(backendError?.message ?? backendError ?? 'Rekisteröityminen epäonnistui')
     }
   }
 
   return (
-    <div className='login-page'>
-    <h1>Rekisteröidy</h1>
-    <form onSubmit={submit}>
-
-    <label>Käyttäjänimi
-
-    <input name="username"  required ></input>
-    </label>
-    <label>Salasana
-
-    <input type="password" name="password" required></input>
-        </label>
-
-    <label>Toista salasana
-
-    <input type="password" name="secondpassword" required></input>
-    </label>
-    <button type="button" onClick={()=>navigate('/', { replace: true })}>
-          Takaisin etusivulle
-    </button>
-    <button>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Paper sx={{ p: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
           Rekisteröidy
-    </button>
-    <br/>
-        <Link to="/login">Onko sinulla jo tili? Kirjaudu</Link>
+        </Typography>
 
+        <Stack component="form" onSubmit={submit} spacing={2}>
+          <TextField name="username" label="Käyttäjänimi" required autoComplete="username" />
+          <TextField name="password" label="Salasana" type="password" required autoComplete="new-password" />
+          <TextField name="secondpassword" label="Toista salasana" type="password" required autoComplete="new-password" />
 
-    </form>
-     {error && <p role="alert">{error}</p>}
-    </div>
+          {error && <Alert severity="error">{error}</Alert>}
+
+          <Button type="submit" variant="contained">
+            Rekisteröidy
+          </Button>
+          <Button type="button" onClick={() => navigate('/', { replace: true })}>
+            Takaisin etusivulle
+          </Button>
+
+          <Link component={RouterLink} to="/login" state={{ from }} textAlign="center">
+            Onko sinulla jo tili? Kirjaudu
+          </Link>
+        </Stack>
+      </Paper>
+    </Container>
   )
 }
 

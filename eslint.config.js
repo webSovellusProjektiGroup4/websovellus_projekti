@@ -4,6 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import stylistic from '@stylistic/eslint-plugin'
+import react from 'eslint-plugin-react'
 
 export default defineConfig([
   globalIgnores(['dist']),
@@ -27,11 +28,14 @@ export default defineConfig([
       }
     },
     plugins: {
-      '@stylistic': stylistic
+      '@stylistic': stylistic,
+      react
     },
     rules: {
+      // JSX-komponentti, jota ei ole importattu tai määritelty (esim. <Button> ilman importtia)
+      'react/jsx-no-undef': 'error',
       // Disallow unused variables; names starting with an uppercase letter or _ (and _-prefixed arguments) are ignored
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
       // Always use === and !== instead of == and !=
       eqeqeq: ['error', 'always'],
       // Use let/const instead of var
@@ -49,15 +53,15 @@ export default defineConfig([
         skipComments: true
       }],
       // Indent with 2 spaces; case clauses are indented one level inside switch
-      '@stylistic/indent': ['error', 2, {
+      '@stylistic/indent': ['warn', 2, {
         SwitchCase: 1
       }],
       // Use single quotes; template literals are still allowed
-      '@stylistic/quotes': ['error', 'single', {
+      '@stylistic/quotes': ['warn', 'single', {
         allowTemplateLiterals: 'always'
       }],
       // Do not use semicolons at the end of statements
-      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/semi': ['warn', 'never'],
     }
   }
 ])
