@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import { Button, Stack, TextField } from '@mui/material'
 
 function MovieSearch({ onSearch }) {
   const [searchText, setSearchText] = useState('')
@@ -15,16 +16,36 @@ function MovieSearch({ onSearch }) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Hae elokuvaa..."
+    <Stack
+      component="form"
+      onSubmit={handleSubmit}
+      direction={{ xs: 'column', sm: 'row' }}
+      spacing={2}
+      sx={{
+        width: '100%',
+        maxWidth: 550,
+        mx: 'auto',
+        mb: 4
+      }}
+    >
+      <TextField
+        label="Hae elokuvaa"
+        placeholder="Kirjoita elokuvan nimi..."
+        variant="outlined"
+        size="small"
+        fullWidth
         value={searchText}
         onChange={(event) => setSearchText(event.target.value)}
       />
 
-      <button type="submit">Hae</button>
-    </form>
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{ px: 4 }}
+      >
+        Hae
+      </Button>
+    </Stack>
   )
 }
 
