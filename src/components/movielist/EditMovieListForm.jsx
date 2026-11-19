@@ -1,4 +1,6 @@
 
+import { Button, MenuItem, Stack, TextField } from '@mui/material'
+
 function EditMovieListForm({
   name,
   visibility,
@@ -9,43 +11,45 @@ function EditMovieListForm({
   loading
 }) {
   return (
-    <div>
-      <input
-        type="text"
+    <Stack spacing={2}>
+      <TextField
+        label="Listan nimi"
         value={name}
         onChange={(event) => onNameChange(event.target.value)}
-        aria-label="Muokkaa listan nimeä"
-        maxLength={100}
+        inputProps={{ maxLength: 100 }}
+        fullWidth
       />
 
-      <select
+      <TextField
+        select
+        label="Näkyvyys"
         value={visibility}
-        onChange={(event) =>
-          onVisibilityChange(event.target.value)
-        }
-        aria-label="Muokkaa listan näkyvyyttä"
+        onChange={(event) => onVisibilityChange(event.target.value)}
+        fullWidth
       >
-        <option value="private">Yksityinen</option>
-        <option value="public">Julkinen</option>
-        <option value="unlisted">Linkillä jaettava</option>
-      </select>
+        <MenuItem value="private">Yksityinen</MenuItem>
+        <MenuItem value="public">Julkinen</MenuItem>
+        <MenuItem value="unlisted">Linkillä jaettava</MenuItem>
+      </TextField>
 
-      <button
-        type="button"
-        onClick={onSave}
-        disabled={loading || !name.trim()}
-      >
-        Tallenna muutokset
-      </button>
+      <Stack direction="row" spacing={2}>
+        <Button
+          variant="contained"
+          onClick={onSave}
+          disabled={loading || !name.trim()}
+        >
+          Tallenna muutokset
+        </Button>
 
-      <button
-        type="button"
-        onClick={onCancel}
-        disabled={loading}
-      >
-        Peruuta
-      </button>
-    </div>
+        <Button
+          variant="outlined"
+          onClick={onCancel}
+          disabled={loading}
+        >
+          Peruuta
+        </Button>
+      </Stack>
+    </Stack>
   )
 }
 
