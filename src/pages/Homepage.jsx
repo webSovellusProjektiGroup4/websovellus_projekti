@@ -8,8 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../providers/AuthProvider.jsx'
 import CreateGroupButton from '../components/CreateGroupButton.jsx'
 import GroupsButton from '../components/GroupsButton.jsx'
-
-
+import { Button } from '@mui/material'
 
 function Homepage() {
   const { user, logout } = useAuth()
@@ -35,7 +34,7 @@ function Homepage() {
     }
   }
 
-   const handleSearch = async (query) => {
+  const handleSearch = async (query) => {
     setLoading(true)
     setError(null)
 
@@ -53,10 +52,11 @@ function Homepage() {
     }
   }
 
-  const handleOpenLoginPage = ()=>{
+  const handleOpenLoginPage = () => {
     navigate('/login')
   }
-  const handleOpenRegisterPage = ()=>{
+
+  const handleOpenRegisterPage = () => {
     navigate('/register')
   }
 
@@ -73,14 +73,13 @@ function Homepage() {
         </div>
       ) : (
         <div className="login-button">
+          <button onClick={handleOpenLoginPage}>
+            Kirjaudu
+          </button>
 
-        <button  onClick={handleOpenLoginPage}>
-          Kirjaudu
-        </button>
-
-        <button  onClick={handleOpenRegisterPage}>
-          Rekisteröidy
-        </button>
+          <button onClick={handleOpenRegisterPage}>
+            Rekisteröidy
+          </button>
         </div>
       )}
 
@@ -89,19 +88,18 @@ function Homepage() {
         <CreateGroupButton />
 
         {user && (
-          <button
-            type="button"
+          <Button
+            variant="contained"
             onClick={() => navigate('/lists')}
           >
             Omat elokuvalistat
-          </button>
+          </Button>
         )}
       </div>
 
       <h1>Elokuvahaku</h1>
 
       <MovieSearch onSearch={handleSearch} />
-
 
       <h2>
         {searchQuery
@@ -120,12 +118,11 @@ function Homepage() {
       )}
 
       {error && (
-      <div style={{ marginTop: '20px', padding: '10px', background: '#ffebee', color: 'red' }}>
+        <div style={{ marginTop: '20px', padding: '10px', background: '#ffebee', color: 'red' }}>
           <h3>Error:</h3>
           <p>{error}</p>
         </div>
       )}
-
 
       {searchQuery && (
         <button onClick={fetchData}>
