@@ -30,6 +30,7 @@ const getMovieById = async (req, res, next) => {
     const movie = await response.json()
     res.status(200).json(movie)
   } catch (error) {
+      console.error('getPopularMovies failed:', error)
     res.status(500).json({ error: 'Virhe elokuvan haussa' })
   }
 }
