@@ -1,26 +1,42 @@
+// useState säilyttää lomakkeen arvot ja viestit sivun renderöintien välillä.
 import { useState } from 'react'
-import axios from 'axios'   //voidaan tehdä http pyyntöjä backendille
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import './LoginAndRegisterPage.css'
+import {
+  Alert,
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
 
 function CreateGroupPage() {
   const navigate = useNavigate()
 
+  // Lomakkeen tiedot sekä tallennuksen tila ja käyttäjälle näytettävät viestit.
   const [name, setName] = useState('')
   const [visibility, setVisibility] = useState('private')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
 
-  // async on täällä axios pyynnön takia
+  // Käsittelee lomakkeen lähetyksen ja tekee pyynnön backendille.
   async function submit(event) {
+    // Estetään lomakkeen oletustoiminto eli koko sivun uudelleenlataus.
     event.preventDefault()
 
-    // Aina ennen uutta yritystä tyhjennetään viestit ja laitetaan tallennustila päälle
+    // Tyhjennetään edellisen yrityksen viestit.
     setError('')
     setSuccess('')
 
-    //varmistetaan, että ryhmän nimi ei ole tyhjä, trim poistaa välilyönnit alusta ja lopusta
+    // Poistetaan alun ja lopun välilyönnit, jotta pelkkä välilyönti ei kelpaa nimeksi.
     const cleanName = name.trim()
 
     if (cleanName === '') {
@@ -30,13 +46,14 @@ function CreateGroupPage() {
 
     setSaving(true)
 
-    //Lähetetään pyyntö backendille, että luotais uus ryhmä
+    // Lähetetään uuden ryhmän tiedot backendille.
     try {
       const response = await axios.post('/api/groups', {
         name: cleanName,
         visibility: visibility
       })
 
+      // Backend palauttaa luodun ryhmän tiedot vastauksessa.
       const group = response.data.group
 
       setSuccess(`Ryhmä "${group.name}" luotiin.`)
@@ -44,11 +61,10 @@ function CreateGroupPage() {
     } catch (requestError) {
       let errorMessage = 'Ryhmän luonti epäonnistui.'
 
-      // Tarkistetaan, onko virheestä saatavilla lisätietoa backendiltä
+      // Jos backend palautti tarkemman virheviestin, näytetään se käyttäjälle.
       if (requestError.response && requestError.response.data) {
         const serverError = requestError.response.data.error
 
-        //Virhe voidaan palauttaa joko stringinä tai oliona, tarkistetaan kumpi on kyseessä
         if (typeof serverError === 'string') {
           errorMessage = serverError
         } else if (serverError && serverError.message) {
@@ -56,25 +72,14 @@ function CreateGroupPage() {
         }
       }
 
-      // Asetetaan virheviesti tilaan, jotta se voidaan näyttää käyttäjälle.
       setError(errorMessage)
     } finally {
+      // Tallennus päättyi riippumatta siitä, onnistuiko pyyntö vai ei.
       setSaving(false)
     }
   }
 
-  let errorParagraph = null
-
-  if (error !== '') {
-    errorParagraph = <p role="alert">{error}</p>
-  }
-
-  let successParagraph = null
-
-  if (success !== '') {
-    successParagraph = <p>{success}</p>
-  }
-
+  // Painikkeen teksti kertoo, tallennetaanko ryhmää parhaillaan.
   let buttonText = 'Luo ryhmä'
 
   if (saving) {
@@ -82,53 +87,57 @@ function CreateGroupPage() {
   }
 
   return (
-    <div className="login-page">
-      <h1>Luo ryhmä</h1>
+    <Container className="login-page" maxWidth="sm" sx={{ py: 6 }}>
+      {/* Paper toimii lomakkeen taustakorttina. */}
+      <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 } }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Luo ryhmä
+        </Typography>
 
-      {/* Lomake ryhmän luomista varten, kenttää ei voi jättää tyhjäksi, koska is required. */}
-      <form onSubmit={submit}>
-        <label>
-          Ryhmän nimi
-          <input
-            type="text"
+        {/* Stack asettelee lomakkeen kentät ja painikkeet pystysuuntaan. */}
+        <Stack component="form" onSubmit={submit} spacing={2}>
+          <TextField
+            label="Ryhmän nimi"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            onInvalid={(event) => {
-              event.target.setCustomValidity(
-                'Ryhmän nimi ei voi olla tyhjä.'
-              )
-            }}
-            onInput={(event) => {
-              event.target.setCustomValidity('')
-            }}
             required
+            fullWidth
           />
-        </label>
 
-        <label>
-          Näkyvyys
-          <select
-            value={visibility}
-            onChange={(event) => setVisibility(event.target.value)}
-          >
-            <option value="private">Yksityinen</option>
-            <option value="public">Julkinen</option>
-          </select>
-        </label>
+          {/* Select antaa käyttäjän valita ryhmän näkyvyyden. */}
+          <FormControl fullWidth>
+            <InputLabel id="group-visibility-label">Näkyvyys</InputLabel>
+            <Select
+              labelId="group-visibility-label"
+              label="Näkyvyys"
+              value={visibility}
+              onChange={(event) => setVisibility(event.target.value)}
+            >
+              <MenuItem value="private">Yksityinen</MenuItem>
+              <MenuItem value="public">Julkinen</MenuItem>
+            </Select>
+          </FormControl>
 
-        <button type="submit" disabled={saving}>
-          {buttonText}
-        </button>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <Button type="submit" variant="contained" disabled={saving}>
+              {buttonText}
+            </Button>
 
-        <button type="button" onClick={() => navigate('/')}>
-          Takaisin etusivulle
-        </button>
-      </form>
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => navigate('/')}
+            >
+              Takaisin etusivulle
+            </Button>
+          </Stack>
 
-      {/*lopuksi lähetetään viestit sivulle*/}
-      {errorParagraph}
-      {successParagraph}
-    </div>
+          {/* Näytetään virhe- tai onnistumisviesti vain, jos sellainen on. */}
+          {error && <Alert severity="error" role="alert">{error}</Alert>}
+          {success && <Alert severity="success">{success}</Alert>}
+        </Stack>
+      </Paper>
+    </Container>
   )
 }
 
