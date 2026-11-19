@@ -13,7 +13,7 @@ function GroupsButton() {
   }
 
   return (
-    <Button type="button" variant="outlined" onClick={openGroupsPage}>
+    <Button type="button" variant="contained" onClick={openGroupsPage}>
       Ryhmät
     </Button>
   )

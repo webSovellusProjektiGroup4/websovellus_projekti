@@ -77,11 +77,13 @@ function GroupDetailPage() {
             <Typography variant="h4" component="h1">
               {group.name}
             </Typography>
+
             <Typography>
               Näkyvyys: {groupVisibilityText(group.visibility)}
             </Typography>
-            <Typography>Roolisi ryhmässä: {group.role}</Typography>
 
+            <Typography>Roolisi ryhmässä: {group.role}</Typography>
+            
             {group.role === 'admin' && (
               <Button
                 variant="contained"
@@ -94,13 +96,16 @@ function GroupDetailPage() {
           </Stack>
         </Paper>
 
+
         {/* Keskustelu tuodaan erillisestä GroupChat-komponentista. */}
         <Paper className="group-chat" sx={{ p: 3 }}>
           <Typography variant="h5" component="h2" gutterBottom>
             Keskustelu
           </Typography>
+
           <GroupChat groupId={group.id} />
         </Paper>
+
 
         {/* map luo listaan yhden jäsenrivin jokaista ryhmän jäsentä kohti. */}
         <Paper className="members-list" sx={{ p: 3 }}>
@@ -165,7 +170,7 @@ function GroupDetailPage() {
         {pageContent}
         <Button
           type="button"
-          variant="outlined"
+          variant="contained"
           onClick={() => navigate('/groups')}
           sx={{ alignSelf: 'flex-start' }}
         >
