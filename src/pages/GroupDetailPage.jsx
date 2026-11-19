@@ -6,6 +6,7 @@ import GroupInvitation from '../components/GroupInvitation.jsx'
 import GroupChat from '../components/GroupChat.jsx'
 import GroupJoinRequests from '../components/GroupJoinRequests.jsx'
 import './GroupDetailPage.css'
+import { Button, List, ListItem, ListItemText } from '@mui/material'
 
 function GroupDetailPage() {
 
@@ -78,7 +79,9 @@ function GroupDetailPage() {
         <p>Roolisi ryhmässä: {group.role}</p>
         {
           group.role == "admin" ? 
-          <button onClick={()=>setGroupManagementOpen(true)}>Hallinnoi ryhmää</button>
+          <Button variant="outlined" onClick={() => setGroupManagementOpen(true)}>
+                 Hallinnoi ryhmää
+          </Button>
           : null
         }
         </div>
@@ -87,24 +90,26 @@ function GroupDetailPage() {
         <h2>Keskustelu</h2>
         <GroupChat groupId={group.id} />
         </div>
-        <div className='members-list'>
-
-          <p>Jäsenet</p>
-          <ul>
-            {group.members.map((member)=>{
-              return (
-                <li>{member.username} ({member.role}, {new Date(member.joined_at).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' })})</li>
-              )
-            })}
-          </ul>
-        </div>
+     <div className='members-list'>
+       <h2>Jäsenet</h2>
+           <List dense disablePadding>
+              {group.members.map((member) => (
+             <ListItem key={member.id ?? member.username} disableGutters>
+               <ListItemText
+                primary={member.username}
+                  secondary={`${member.role} · liittynyt ${new Date(member.joined_at).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' })}`}
+            />
+      </ListItem>
+    ))}
+  </List>
+</div>
 
         { groupManagementOpen ? 
 
           <dialog ref={dialogRef} onClose={()=>setGroupManagementOpen(false)}>
             <GroupJoinRequests groupId = {group.id} onMemberAdded  = {fetchGroup}></GroupJoinRequests>
             {group.role === 'admin' && <GroupInvitation groupId={group.id} visibility={group.visibility} />}
-            <button onClick={()=>setGroupManagementOpen(false)}>Sulje</button>
+            <Button onClick={() => setGroupManagementOpen(false)}>Sulje</Button>
 
           </dialog> : null
         }
@@ -119,9 +124,9 @@ function GroupDetailPage() {
     <main className='group-page'>
       {pageContent}
 
-      <button type="button" onClick={() => navigate('/groups')}>
-        Palaa ryhmiin
-      </button>
+      <Button variant="text" onClick={() => navigate('/groups')}>
+        ← Palaa ryhmiin
+      </Button>
     </main>
   )
 }

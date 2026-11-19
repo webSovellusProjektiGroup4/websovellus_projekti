@@ -3,7 +3,7 @@ import axios from 'axios'
 import MessageBox from './MessageBox'
 import { useAuth } from '../providers/AuthProvider'
 import './MessageBox.css'
-
+import { TextField, Button, Alert } from '@mui/material'
 
 function GroupChat({ groupId }) {
   const { user } = useAuth()
@@ -54,33 +54,34 @@ function GroupChat({ groupId }) {
     }
   }
 
-  return (
-    <div>
-      {messages.length === 0 ? (
-        <p>Ei vielä viestejä.</p>
-      ) : (
-       <ul className="message-list">
+   return (
+  <div>
+    {messages.length === 0 ? (
+      <p>Ei vielä viestejä.</p>
+    ) : (
+      <ul className="message-list">
         {messages.map((message) => (
           <MessageBox key={message.id} message={message} user={user} />
         ))}
       </ul>
-      
-      )}
+    )}
 
-      <form onSubmit={sendMessage}>
-        <input
-          type="text"
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          placeholder="Kirjoita viesti..."
-        />
-        <button type="submit" disabled={sending}>
-          {sending ? 'Lähetetään...' : 'Lähetä'}
-        </button>
-        {error && <p role="alert">{error}</p>}
-      </form>
-    </div>
-  )
+    <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+       <TextField
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+        placeholder="Kirjoita viesti..."
+        size="small"
+        sx={{ flex: 1 }}
+      />
+      <Button type="submit" variant="contained" disabled={sending || !text.trim()}>
+        {sending ? 'Lähetetään...' : 'Lähetä'}
+      </Button>
+    </form>
+
+    {error && <Alert severity="error">{error}</Alert>}
+  </div>
+)
 }
 
 export default GroupChat
