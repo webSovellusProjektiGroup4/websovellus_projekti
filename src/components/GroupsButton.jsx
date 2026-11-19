@@ -1,20 +1,21 @@
+// React Routerin avulla vaihdetaan näkymää lataamatta koko sivua uudelleen.
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../providers/AuthProvider.jsx'
+// MUI:n valmis painikekomponentti.
+import { Button } from '@mui/material'
 
 function GroupsButton() {
-  const { user } = useAuth()
+  // navigate-funktiolla siirrytään sovelluksen toiselle reitille.
   const navigate = useNavigate()
 
-
-
+  // Painikkeen painaminen avaa ryhmien listauksen.
   function openGroupsPage() {
     navigate('/groups')
   }
 
   return (
-    <button type="button" onClick={openGroupsPage}>
+    <Button type="button" variant="outlined" onClick={openGroupsPage}>
       Ryhmät
-    </button>
+    </Button>
   )
 }
 
