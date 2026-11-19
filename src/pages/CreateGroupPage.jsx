@@ -91,7 +91,7 @@ function CreateGroupPage() {
       {/* Paper toimii lomakkeen taustakorttina. */}
       <Paper elevation={3} sx={{ p: { xs: 3, sm: 4 } }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Luo ryhmä
+          Luo uusi ryhmä
         </Typography>
 
         {/* Stack asettelee lomakkeen kentät ja painikkeet pystysuuntaan. */}

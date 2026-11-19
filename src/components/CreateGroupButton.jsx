@@ -21,7 +21,7 @@ function CreateGroupButton() {
 
   return (
     <Button type="button" variant="contained" onClick={openCreateGroupPage}>
-      Luo ryhmä
+      Luo uusi ryhmä
     </Button>
   )
 }

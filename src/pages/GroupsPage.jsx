@@ -4,6 +4,7 @@ import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import groupVisibilityText from '../utils/groupVisibilityText.js'
 import { useAuth } from '../providers/AuthProvider.jsx'
+import CreateGroupButton from '../components/CreateGroupButton.jsx'
 import {
   Alert,
   Button,
@@ -28,7 +29,6 @@ function GroupsPage() {
   const [groups, setGroups] = useState([])
   const [publicGroups, setPublicGroups] = useState(undefined)
   const [publicGroupSearch, setPublicGroupSearch] = useState('')
-
   // Sivun lataus- ja virhetilat.
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -136,9 +136,18 @@ function GroupsPage() {
       {/* Stack asettelee sivun osiot pystysuuntaan ja lisää niiden väliin tilaa. */}
       <Stack spacing={4}>
         <section>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Omat ryhmät
-          </Typography>
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            justifyContent="space-between"
+            spacing={2}
+            sx={{ mb: 2 }}
+          >
+            <Typography variant="h4" component="h1">
+              Omat ryhmät
+            </Typography>
+            <CreateGroupButton />
+          </Stack>
           {pageContent}
         </section>
 
@@ -175,8 +184,7 @@ function GroupsPage() {
               {publicError}
             </Alert>
           )}
-
-          {/* Tulokset näytetään vasta ensimmäisen haun jälkeen. */}
+           {/* Tulokset näytetään vasta ensimmäisen haun jälkeen. */}
           {publicGroups !== undefined && (
             publicGroups.length === 0 ? (
               <Typography sx={{ mt: 2 }}>

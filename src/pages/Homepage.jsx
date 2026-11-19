@@ -6,7 +6,6 @@ import MovieList from '../components/MovieList.jsx'
 import MovieSearch from '../components/MovieSearch.jsx'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../providers/AuthProvider.jsx'
-import CreateGroupButton from '../components/CreateGroupButton.jsx'
 import GroupsButton from '../components/GroupsButton.jsx'
 import { Button } from '@mui/material'
 
@@ -85,7 +84,6 @@ function Homepage() {
 
       <div className="homepage-navigation">
         <GroupsButton />
-        <CreateGroupButton />
 
         {user && (
           <Button
