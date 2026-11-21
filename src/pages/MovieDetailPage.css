@@ -1,0 +1,36 @@
+/* Tumma kerros koko sivun päälle, yläpalkin alle */
+.movie-detail {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 32px 5%;
+  background: rgba(12, 12, 12, 0.92);
+  color: #fff;
+  text-align: left;
+}
+
+.movie-detail-close {
+  position: fixed !important;
+  top: 76px;
+  right: 16px;
+  color: #fff !important;
+}
+
+.movie-detail-top {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: flex-start;
+  @media (max-width: 700px) {
+  .movie-detail-top {
+    flex-direction: column;  
+  }
+}
+}
+
+.movie-detail-actions {
+}

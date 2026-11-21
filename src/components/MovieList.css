@@ -1,8 +1,16 @@
+/* Suositut elokuvat: yksi vierivä rivi */
 .movie-list {
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  top: 5px;
-  bottom: 5px;
+  padding: 12px 8px;
+
+}
+
+/* Hakutulokset: ruudukko, sarakkeiden määrä mukautuu näytön leveyteen */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
   padding: 12px 8px;
 }

@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Button, Stack, TextField } from '@mui/material'
 
@@ -25,7 +24,7 @@ function MovieSearch({ onSearch }) {
         width: '100%',
         maxWidth: 550,
         mx: 'auto',
-        mb: 4
+
       }}
     >
       <TextField
@@ -41,7 +40,7 @@ function MovieSearch({ onSearch }) {
       <Button
         type="submit"
         variant="contained"
-        sx={{ px: 4 }}
+
       >
         Hae
       </Button>

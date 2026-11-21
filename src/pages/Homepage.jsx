@@ -1,13 +1,12 @@
-
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './Homepage.css'
 import MovieList from '../components/MovieList.jsx'
 import MovieSearch from '../components/MovieSearch.jsx'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../providers/AuthProvider.jsx'
 import GroupsButton from '../components/GroupsButton.jsx'
 import { Button } from '@mui/material'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 function Homepage() {
   const { user, logout } = useAuth()
@@ -15,89 +14,37 @@ function Homepage() {
   const [movies, setMovies] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [movieListMode, setMovieListMode] = useState('row')
+  const [searchParams] = useSearchParams()
+  const searchQuery = searchParams.get('search') ?? ''
 
   const fetchData = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const response = await axios.get('/api/movies/popular')
+      let response
+      if (searchQuery) {
+        response = await axios.get('/api/movies/search', { params: { query: searchQuery } })
+        setMovieListMode('table')
+      } else {
+        response = await axios.get('/api/movies/popular')
+        setMovieListMode('row')       // tai mitä suosituille halutaan
+      }
       setMovies(response.data.results)
-
-      setSearchQuery('')
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleSearch = async (query) => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await axios.get('/api/movies/search', {
-        params: { query }
-      })
-
-      setMovies(response.data.results)
-      setSearchQuery(query)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleOpenLoginPage = () => {
-    navigate('/login')
-  }
-
-  const handleOpenRegisterPage = () => {
-    navigate('/register')
   }
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [searchQuery])
 
   return (
     <>
-      {user ? (
-        <div className="login-button">
-          {user.username}
-          <button onClick={logout}>Kirjaudu ulos</button>
-        </div>
-      ) : (
-        <div className="login-button">
-          <button onClick={handleOpenLoginPage}>
-            Kirjaudu
-          </button>
-
-          <button onClick={handleOpenRegisterPage}>
-            Rekisteröidy
-          </button>
-        </div>
-      )}
-
-      <div className="homepage-navigation">
-        <GroupsButton />
-
-        {user && (
-          <Button
-            variant="contained"
-            onClick={() => navigate('/lists')}
-          >
-            Omat elokuvalistat
-          </Button>
-        )}
-      </div>
-
-      <h1>Elokuvahaku</h1>
-
-      <MovieSearch onSearch={handleSearch} />
 
       <h2>
         {searchQuery
@@ -112,7 +59,7 @@ function Homepage() {
       )}
 
       {!loading && !error && movies.length > 0 && (
-        <MovieList movies={movies} />
+        <MovieList movies={movies} mode={movieListMode} />
       )}
 
       {error && (
@@ -123,9 +70,9 @@ function Homepage() {
       )}
 
       {searchQuery && (
-        <button onClick={fetchData}>
+        <Button onClick={fetchData}>
           Takaisin etusivulle
-        </button>
+        </Button>
       )}
     </>
   )

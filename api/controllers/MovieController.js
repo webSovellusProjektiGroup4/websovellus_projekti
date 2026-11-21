@@ -15,7 +15,8 @@ const getMovieById = async (req, res, next) => {
     const API_TOKEN = process.env.TMDB_API_TOKEN
 
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?language=fi-FI`,
+      //Lisätäänhakuun credits, videot
+      `https://api.themoviedb.org/3/movie/${id}?language=fi-FI&append_to_response=credits,videos&include_video_language=fi,en`,
       {
         headers: { Authorization: `Bearer ${API_TOKEN}` }
       }
@@ -30,7 +31,7 @@ const getMovieById = async (req, res, next) => {
     const movie = await response.json()
     res.status(200).json(movie)
   } catch (error) {
-      console.error('getPopularMovies failed:', error)
+    console.error('getPopularMovies failed:', error)
     res.status(500).json({ error: 'Virhe elokuvan haussa' })
   }
 }

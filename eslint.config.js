@@ -42,16 +42,8 @@ export default defineConfig([
       'no-var': 'error',
       // Use const for variables that are never reassigned
       'prefer-const': 'error',
-      // Warn when a function's cyclomatic complexity exceeds 5
-      complexity: ['warn', 5],
       // Warn when blocks are nested deeper than 3 levels
       'max-depth': ['warn', 3],
-      // Warn when a function is longer than 50 lines (blank lines and comments not counted)
-      'max-lines-per-function': ['warn', {
-        max: 50,
-        skipBlankLines: true,
-        skipComments: true
-      }],
       // Indent with 2 spaces; case clauses are indented one level inside switch
       '@stylistic/indent': ['warn', 2, {
         SwitchCase: 1
@@ -62,6 +54,19 @@ export default defineConfig([
       }],
       // Do not use semicolons at the end of statements
       '@stylistic/semi': ['warn', 'never'],
+      // Tallennuksessa (Ctrl + S) korjattavat muotoilut
+      '@stylistic/no-multiple-empty-lines': ['warn', { max: 1, maxBOF: 0, maxEOF: 0 }],
+      '@stylistic/no-trailing-spaces': 'warn',
+      '@stylistic/eol-last': 'warn',
+      '@stylistic/object-curly-spacing': ['warn', 'always'],
+      '@stylistic/comma-spacing': 'warn',
+      '@stylistic/key-spacing': 'warn',
+      '@stylistic/space-before-blocks': 'warn',
+      '@stylistic/keyword-spacing': 'warn',
+      '@stylistic/arrow-spacing': 'warn',
+      '@stylistic/jsx-indent-props': ['warn', 2],
+      '@stylistic/jsx-closing-tag-location': 'warn',
+      '@stylistic/jsx-equals-spacing': 'warn',
     }
   }
 ])
