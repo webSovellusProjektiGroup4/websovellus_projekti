@@ -1,11 +1,19 @@
-import { fetchPopularMovies, searchMovies } from '../services/movieService.js'
-
+import { fetchPopularMovies, searchMovies, fetchMoviesByGenre } from '../services/movieService.js'
 const getPopularMovies = async (req, res, next) => {
   try {
     const popularMovies = await fetchPopularMovies()
     res.status(200).json(popularMovies)
   } catch (error) {
     res.status(500).json({ error: 'Virhe elokuvien haussa' })
+  }
+}
+
+const getGenreMovies = async (req, res, next) => {
+  try {
+    const genreMovies = await fetchMoviesByGenre(req.params.genreId)
+    res.status(200).json(genreMovies)
+  } catch (error) {
+    res.status(500).json({ error: 'Virhe genren elokuvien haussa' })
   }
 }
 
@@ -54,4 +62,4 @@ const getSearchMovies = async (req, res, next) => {
   }
 }
 
-export { getPopularMovies, getMovieById, getSearchMovies }
+export { getPopularMovies, getMovieById, getSearchMovies, getGenreMovies }

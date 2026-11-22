@@ -7,6 +7,18 @@ import { useAuth } from '../providers/AuthProvider.jsx'
 import GroupsButton from '../components/GroupsButton.jsx'
 import { Button } from '@mui/material'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import GenreRow from '../components/Etusivu/GenreRow.jsx'
+
+const GENRES = [
+  { id: 27, name: 'Kauhu' },
+  { id: 35, name: 'Komedia' },
+  { id: 10749, name: 'Romantiikka' },
+  { id: 28, name: 'Toiminta' },
+  { id: 16, name: 'Animaatio' },
+  { id: 878, name: 'Scifi' },
+  { id: 53, name: 'Jännitys' },
+  { id: 18, name: 'Draama' }
+]
 
 function Homepage() {
   const { user, logout } = useAuth()
@@ -68,6 +80,12 @@ function Homepage() {
           <p>{error}</p>
         </div>
       )}
+
+      {!searchQuery && GENRES.map((genre) => (
+        <GenreRow key={genre.id} genreId={genre.id} title={genre.name} />
+    ))}
+      
+
 
       {searchQuery && (
         <Button onClick={fetchData}>

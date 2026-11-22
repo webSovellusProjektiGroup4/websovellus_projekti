@@ -16,6 +16,29 @@ const fetchPopularMovies = async () => {
 
 }
 
+const fetchMoviesByGenre = async (genreId) => {
+  const params = new URLSearchParams({
+    with_genres: genreId,
+    sort_by: 'popularity.desc',
+    language: 'fi-FI',
+    'vote_count.gte': 20
+  })
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/discover/movie?${params}`,
+    { headers: { Authorization: `Bearer ${API_TOKEN}` } }
+  )
+
+  if (!response.ok) {
+    const error = new Error(`TMDB-haku epäonnistui (${response.status})`)
+    error.status = 502
+    throw error
+  }
+
+  const movies = await response.json()
+  return movies
+}
+
 const searchMovies = async (query) => {
   const response = await fetch(
     `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=fi-FI`,
@@ -64,4 +87,4 @@ const fetchMovieDetails = async (tmdbId) => {
 }
 
 
-export { fetchPopularMovies, searchMovies, fetchMovieDetails }
+export { fetchPopularMovies, searchMovies, fetchMovieDetails, fetchMoviesByGenre }
