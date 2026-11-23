@@ -26,6 +26,8 @@ function GroupChat({ groupId }) {
   // Haetaan viestit, kun komponentti tulee näkyviin tai ryhmä vaihtuu
   useEffect(() => {
     fetchMessages()
+    const interval = setInterval(fetchMessages, 5000)
+    return () => clearInterval(interval)
   }, [groupId])
 
   async function sendMessage(event) {
@@ -54,34 +56,34 @@ function GroupChat({ groupId }) {
     }
   }
 
-   return (
-  <div>
-    {messages.length === 0 ? (
-      <p>Ei vielä viestejä.</p>
-    ) : (
-      <ul className="message-list">
-        {messages.map((message) => (
-          <MessageBox key={message.id} message={message} user={user} />
-        ))}
-      </ul>
-    )}
+  return (
+    <div>
+      {messages.length === 0 ? (
+        <p>Ei vielä viestejä.</p>
+      ) : (
+        <ul className="message-list">
+          {messages.map((message) => (
+            <MessageBox key={message.id} message={message} user={user} />
+          ))}
+        </ul>
+      )}
 
-    <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-       <TextField
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        placeholder="Kirjoita viesti..."
-        size="small"
-        sx={{ flex: 1 }}
-      />
-      <Button type="submit" variant="contained" disabled={sending || !text.trim()}>
-        {sending ? 'Lähetetään...' : 'Lähetä'}
-      </Button>
-    </form>
+      <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <TextField
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          placeholder="Kirjoita viesti..."
+          size="small"
+          sx={{ flex: 1 }}
+        />
+        <Button type="submit" variant="contained" disabled={sending || !text.trim()}>
+          {sending ? 'Lähetetään...' : 'Lähetä'}
+        </Button>
+      </form>
 
-    {error && <Alert severity="error">{error}</Alert>}
-  </div>
-)
+      {error && <Alert severity="error">{error}</Alert>}
+    </div>
+  )
 }
 
 export default GroupChat
