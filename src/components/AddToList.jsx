@@ -43,7 +43,7 @@ function AddToList({ movieId }) {
           select
           label="Elokuvalista"
           value={selectedListId}
-          sx={{ backgroundColor: 'white', maxWidth: '300px' }}
+          sx={{ backgroundColor: 'white', width: '300px' }}
           onChange={(e) => setSelectedListId(e.target.value)}
         >
           {lists.map((list) => (

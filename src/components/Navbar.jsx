@@ -15,7 +15,7 @@ function Navbar() {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <Typography variant="h6" sx={{ mr: 3 }}>Elokuvahaku</Typography>
+        {/* <Typography variant="h6" sx={{ mr: 3 }}>Elokuvahaku</Typography> */}
 
         <Button component={NavLink} to="/" color="inherit">Etusivu</Button>
         <Button component={NavLink} to="/groups" color="inherit">Ryhmät</Button>

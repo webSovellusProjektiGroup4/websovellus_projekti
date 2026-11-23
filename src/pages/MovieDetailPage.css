@@ -33,4 +33,9 @@
 }
 
 .movie-detail-actions {
+  padding: 10px;
+  background-color: #4a4949;
+  border-radius: 5px;
+  width: fit-content;
+
 }
