@@ -15,7 +15,14 @@ function Navbar() {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        {/* <Typography variant="h6" sx={{ mr: 3 }}>Elokuvahaku</Typography> */}
+        <Box
+          component={NavLink}
+          to="/"
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 3, color: 'inherit', textDecoration: 'none' }}
+        >
+          <Box component="img" src="/logo.svg" alt="Elokuvahaku logo" sx={{ height: 40, width: 40 }} />
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Elokuvahaku</Typography>
+        </Box>
 
         <Button component={NavLink} to="/" color="inherit">Etusivu</Button>
         <Button component={NavLink} to="/groups" color="inherit">Ryhmät</Button>

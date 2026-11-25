@@ -1,4 +1,4 @@
-import { isGroupMember, getMessages, addMessage } from '../models/Groupmessage.js'
+import { isGroupMember, getMessages, addMessage } from '../models/groupmessage.js'
 
 const listMessages = async (req, res) => {
     try {
