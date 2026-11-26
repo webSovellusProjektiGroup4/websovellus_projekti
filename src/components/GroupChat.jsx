@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import MessageBox from './MessageBox'
+import ShareMovieDialog from './ShareMovieDialog'
 import { useAuth } from '../providers/AuthProvider'
 import './MessageBox.css'
-import { TextField, Button, Alert } from '@mui/material'
+import { TextField, Button, Alert, IconButton, Tooltip } from '@mui/material'
+import MovieIcon from '@mui/icons-material/Movie'
 
 function GroupChat({ groupId }) {
   const { user } = useAuth()
@@ -12,6 +14,7 @@ function GroupChat({ groupId }) {
   const [text, setText] = useState('')
   const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   // Hakee ryhmän viestit backendistä
   async function fetchMessages() {
@@ -63,12 +66,18 @@ function GroupChat({ groupId }) {
       ) : (
         <ul className="message-list">
           {messages.map((message) => (
-            <MessageBox key={message.id} message={message} user={user} />
+            // Viestit ja elokuvajaot tulevat eri tauluista, joten id voi toistua: avaimeen myös tyyppi
+            <MessageBox key={`${message.type}-${message.id}`} message={message} user={user} />
           ))}
         </ul>
       )}
 
       <form onSubmit={sendMessage} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <Tooltip title="Jaa elokuva">
+          <IconButton aria-label="Jaa elokuva" onClick={() => setShareOpen(true)}>
+            <MovieIcon />
+          </IconButton>
+        </Tooltip>
         <TextField
           value={text}
           onChange={(event) => setText(event.target.value)}
@@ -82,6 +91,13 @@ function GroupChat({ groupId }) {
       </form>
 
       {error && <Alert severity="error">{error}</Alert>}
+
+      <ShareMovieDialog
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        groupId={groupId}
+        onShared={fetchMessages}
+      />
     </div>
   )
 }

@@ -59,7 +59,17 @@ const searchMovies = async (query) => {
   return movies
 }
 
+// Muistissa pidettävä välimuisti elokuvien nimille ja julisteille.
+// Ryhmächat hakee viestit 5 s välein, joten ilman tätä sama elokuva haettaisiin TMDB:stä jatkuvasti.
+const movieDetailsCache = new Map()
+const MAX_CACHED_MOVIES = 1000
+
 const fetchMovieDetails = async (tmdbId) => {
+  const cached = movieDetailsCache.get(Number(tmdbId))
+  if (cached) {
+    return cached
+  }
+
   const response = await fetch(
     `https://api.themoviedb.org/3/movie/${tmdbId}?language=fi-FI`,
     {
@@ -73,17 +83,25 @@ const fetchMovieDetails = async (tmdbId) => {
     const error = new Error(
       `Elokuvan tietojen hakeminen epäonnistui (${response.status})`
     )
-    error.status = 502
+    // 404 = elokuvaa ei ole TMDB:ssä, muut virheet ovat TMDB:n päässä
+    error.status = response.status === 404 ? 404 : 502
     throw error
   }
 
   const movie = await response.json()
 
-  return {
+  const details = {
     tmdb_id: movie.id,
     title: movie.title,
     poster_path: movie.poster_path
   }
+
+  if (movieDetailsCache.size >= MAX_CACHED_MOVIES) {
+    movieDetailsCache.clear()
+  }
+  movieDetailsCache.set(movie.id, details)
+
+  return details
 }
 
 
